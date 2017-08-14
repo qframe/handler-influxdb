@@ -10,6 +10,9 @@ import (
 
 	"github.com/qnib/qframe-types"
 	"strings"
+	"github.com/qframe/types/plugin"
+	"github.com/qframe/types/qchannel"
+	"github.com/qframe/types/metrics"
 )
 
 const (
@@ -19,7 +22,7 @@ const (
 )
 
 type Plugin struct {
-    qtypes.Plugin
+    *qtypes_plugin.Plugin
 	cli client.Client
 	metricCount int
 	mutex sync.Mutex
@@ -27,10 +30,10 @@ type Plugin struct {
 
 }
 
-func New(qChan qtypes.QChan, cfg *config.Config, name string) (Plugin, error) {
+func New(qChan qtypes_qchannel.QChan, cfg *config.Config, name string) (Plugin, error) {
 	var err error
 	p := Plugin{
-		Plugin: qtypes.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
+		Plugin: qtypes_plugin.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
 		metricCount: 0,
 	}
 	p.SanitizeLabels = p.CfgBoolOr("sanitize-labels", false)
@@ -83,7 +86,7 @@ func (p *Plugin) WriteBatch(points client.BatchPoints) client.BatchPoints {
 	return p.NewBatchPoints()
 }
 
-func (p *Plugin) MetricsToBatchPoint(m qtypes.Metric) (pt *client.Point, err error) {
+func (p *Plugin) MetricsToBatchPoint(m qtypes_metrics.Metric) (pt *client.Point, err error) {
 	fields := map[string]interface{}{
 		"value": m.Value,
 	}
@@ -119,8 +122,8 @@ func (p *Plugin) Run() {
 		select {
 		case val := <-bg.Read:
 			switch val.(type) {
-			case qtypes.Metric:
-				m := val.(qtypes.Metric)
+			case qtypes_metrics.Metric:
+				m := val.(qtypes_metrics.Metric)
 				if p.StopProcessingMetric(m, false) {
 					continue
 				}
