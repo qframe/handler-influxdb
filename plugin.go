@@ -7,12 +7,11 @@ import (
 	"sync"
 	"github.com/zpatrick/go-config"
 	"github.com/influxdata/influxdb/client/v2"
-
-	"github.com/qnib/qframe-types"
 	"strings"
 	"github.com/qframe/types/plugin"
 	"github.com/qframe/types/qchannel"
 	"github.com/qframe/types/metrics"
+	"github.com/qframe/types/ticker"
 )
 
 const (
@@ -108,8 +107,7 @@ func (p *Plugin) Run() {
 	batchSize := p.CfgIntOr("batch-size", 100)
 	tick := p.CfgIntOr("ticker-msec", 1000)
 	p.Connect()
-	bg := p.QChan.Data.Join()
-	tc := p.QChan.Tick.Join()
+	dc, _, tc := p.JoinChannels()
 	bp := p.NewBatchPoints()
 	p.StartTicker("influxdb", tick)
 	dims := map[string]string{
@@ -120,13 +118,10 @@ func (p *Plugin) Run() {
 	lastTick := time.Now().AddDate(0,0,-1)
 	for {
 		select {
-		case val := <-bg.Read:
+		case val := <- dc.Read:
 			switch val.(type) {
 			case qtypes_metrics.Metric:
 				m := val.(qtypes_metrics.Metric)
-				if p.StopProcessingMetric(m, false) {
-					continue
-				}
 				pt, err := p.MetricsToBatchPoint(m)
 				if err != nil {
 					p.Log("error", fmt.Sprintf("%v", err))
@@ -138,18 +133,18 @@ func (p *Plugin) Run() {
 					bLen := len(bp.Points())
 					p.Log("debug", fmt.Sprintf("%d >= %d: Write batch",bLen, batchSize))
 					p.metricCount += bLen+1
-					pt, _ = p.MetricsToBatchPoint(qtypes.NewExt(p.Name, "influxdb.batch.size", qtypes.Gauge, float64(bLen+1), dims, time.Now(), false))
+					pt, _ = p.MetricsToBatchPoint(qtypes_metrics.NewExt(p.Name, "influxdb.batch.size", qtypes_metrics.Gauge, float64(bLen+1), dims, time.Now(), false))
 					bp.AddPoint(pt)
 					bp = p.WriteBatch(bp)
-					took := time.Now().Sub(now)
-					p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
+					//took := time.Now().Sub(now)
+					//p.QChan.Data.Send(qtypes_metrics.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
 					lastTick = now
 				}
 			}
 		case val := <-tc.Read:
 			switch val.(type) {
-			case qtypes.Ticker:
-				tick := val.(qtypes.Ticker)
+			case qtypes_ticker.Ticker:
+				tick := val.(qtypes_ticker.Ticker)
 				tickDiff, skipTick := tick.SkipTick(lastTick)
 				if skipTick {
 					msg := fmt.Sprintf("tick '%s' | Last tick %s ago (< %s)", tick.Name, tickDiff.String(), tick.Duration.String())
@@ -161,12 +156,12 @@ func (p *Plugin) Run() {
 				// Might take some time
 				bLen := len(bp.Points())
 				p.Log("trace", fmt.Sprintf("tick '%s' | Last tick %s ago ([some wiggel room] >= %s) - Write batch of %d", tick.Name, tickDiff.String(), tick.Duration.String(), bLen))
-				pt, _ := p.MetricsToBatchPoint(qtypes.NewExt(p.Name, "influxdb.batch.size", qtypes.Gauge, float64(bLen+1), dims, time.Now(), false))
+				pt, _ := p.MetricsToBatchPoint(qtypes_metrics.NewExt(p.Name, "influxdb.batch.size", qtypes_metrics.Gauge, float64(bLen+1), dims, time.Now(), false))
 				bp.AddPoint(pt)
 				p.metricCount += bLen+1
 				bp = p.WriteBatch(bp)
-				took := time.Now().Sub(now)
-				p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
+				//took := time.Now().Sub(now)
+				//p.QChan.Data.Send(qtypes_metrics.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
 			default:
 				p.Log("warn", fmt.Sprintf("Received Tick of type %s", reflect.TypeOf(val)))
 			}

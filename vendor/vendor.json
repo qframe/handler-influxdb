@@ -1,0 +1,115 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "Pc2ORQp+VY3Un/dkh4QwLC7R6lE=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": "a368813c5e648fee92e5f6c30e3944ff9d5e8895",
+			"revisionTime": "2017-06-26T11:06:00Z"
+		},
+		{
+			"checksumSHA1": "FErdaG0vJrWecQqeMJKWS+alUKA=",
+			"path": "github.com/codegangsta/cli",
+			"revision": "f017f86fccc5a039a98f23311f34fdf78b014f78",
+			"revisionTime": "2017-08-13T14:59:49Z"
+		},
+		{
+			"checksumSHA1": "ImX1uv6O09ggFeBPUJJ2nu7MPSA=",
+			"path": "github.com/ghodss/yaml",
+			"revision": "0ca9ea5df5451ffdf184b4428c902747c2c11cd7",
+			"revisionTime": "2017-03-27T23:54:44Z"
+		},
+		{
+			"checksumSHA1": "87LEfpY9cOk9CP7pWyIbmQ/6enU=",
+			"path": "github.com/go-ini/ini",
+			"revision": "c787282c39ac1fc618827141a1f762240def08a3",
+			"revisionTime": "2017-08-13T05:22:30Z"
+		},
+		{
+			"checksumSHA1": "LkqrRKe/FqwMq5uss8KYdTtwCgU=",
+			"path": "github.com/grafov/bcast",
+			"revision": "2c1e067432bbea64f9bd7348613e2977e11ca299",
+			"revisionTime": "2017-07-09T22:27:04Z"
+		},
+		{
+			"checksumSHA1": "2SyY8LpzxtFHo9yLZp4n1SdC65A=",
+			"path": "github.com/influxdata/influxdb/client/v2",
+			"revision": "9f74c0fff9d9f3a4bc8fb9768909d2d5fcbbbb23",
+			"revisionTime": "2017-08-16T13:57:46Z"
+		},
+		{
+			"checksumSHA1": "+xKQqEHpLnfoZU1uX7DH+dd4Q+g=",
+			"path": "github.com/influxdata/influxdb/models",
+			"revision": "9f74c0fff9d9f3a4bc8fb9768909d2d5fcbbbb23",
+			"revisionTime": "2017-08-16T13:57:46Z"
+		},
+		{
+			"checksumSHA1": "H/J/qLqzUONXIecHHKtVZmxJZZA=",
+			"path": "github.com/influxdata/influxdb/pkg/escape",
+			"revision": "9f74c0fff9d9f3a4bc8fb9768909d2d5fcbbbb23",
+			"revisionTime": "2017-08-16T13:57:46Z"
+		},
+		{
+			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
+			"path": "github.com/pkg/errors",
+			"revision": "c605e284fe17294bda444b34710735b29d1a9d90",
+			"revisionTime": "2017-05-05T04:36:39Z"
+		},
+		{
+			"checksumSHA1": "ZokxRO/FavchTs9BrbmiCZNrzO4=",
+			"path": "github.com/qframe/types/constants",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "IypK2Ok21t3MqgtbokuPmA9ZSBY=",
+			"path": "github.com/qframe/types/helper",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "r7K3SiWYIZo+wbR954dXdwt4iJI=",
+			"path": "github.com/qframe/types/messages",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "2osz+VaAPSdiwUHHF2LvTcHSNUg=",
+			"path": "github.com/qframe/types/metrics",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "haR7pUH9x1d8dEel59K5BYNhn7U=",
+			"path": "github.com/qframe/types/plugin",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "bI9DmB1P2XfVkog5EvRu01AZ4Uc=",
+			"path": "github.com/qframe/types/qchannel",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "aWT8tf2NLTwFLrrTSEZCraccjMI=",
+			"path": "github.com/qframe/types/ticker",
+			"revision": "2758c866567c68edd13e71ee9ff2389885d57d93",
+			"revisionTime": "2017-08-14T20:17:02Z"
+		},
+		{
+			"checksumSHA1": "m8hYD/alsufIYIM7sR06wbL+dKo=",
+			"path": "github.com/zpatrick/go-config",
+			"revision": "710646a45582fde23bf77bacbc2f38008dc7ffc2",
+			"revisionTime": "2016-11-18T20:29:31Z"
+		},
+		{
+			"checksumSHA1": "RDJpJQwkF012L6m/2BJizyOksNw=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "eb3733d160e74a9c7e442f435eb3bea458e1d19f",
+			"revisionTime": "2017-08-12T16:00:11Z"
+		}
+	],
+	"rootPath": "github.com/qframe/handler-influxdb"
+}
