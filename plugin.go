@@ -9,10 +9,10 @@ import (
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/zpatrick/go-config"
 
-	"github.com/qnib/qframe-types"
 	"github.com/qframe/types/plugin"
 	"github.com/qframe/types/ticker"
 	"github.com/qframe/types/qchannel"
+	"github.com/qframe/types/metrics"
 )
 
 const (
@@ -86,7 +86,7 @@ func (p *Plugin) WriteBatch(points client.BatchPoints) client.BatchPoints {
 	return p.NewBatchPoints()
 }
 
-func (p *Plugin) MetricsToBatchPoint(m qtypes.Metric) (pt *client.Point, err error) {
+func (p *Plugin) MetricsToBatchPoint(m qtypes_metrics.Metric) (pt *client.Point, err error) {
 	fields := map[string]interface{}{
 		"value": m.Value,
 	}
@@ -123,8 +123,8 @@ func (p *Plugin) Run() {
 		case val := <-bg.Read:
 			switch val.(type) {
 			// TODO: Change to qtypes_metrics.Metric
-			case qtypes.Metric:
-				m := val.(qtypes.Metric)
+			case qtypes_metrics.Metric:
+				m := val.(qtypes_metrics.Metric)
 				// TODO: Reimplement StopProcessing for qtypes_metrics.Metrics
 				/*if p.StopProcessingMetric(m, false) {
 					continue
@@ -140,35 +140,16 @@ func (p *Plugin) Run() {
 					bLen := len(bp.Points())
 					p.Log("debug", fmt.Sprintf("%d >= %d: Write batch",bLen, batchSize))
 					p.metricCount += bLen+1
-					pt, _ = p.MetricsToBatchPoint(qtypes.NewExt(p.Name, "influxdb.batch.size", qtypes.Gauge, float64(bLen+1), dims, time.Now(), false))
+					pt, _ = p.MetricsToBatchPoint(qtypes_metrics.NewExt(p.Name, "influxdb.batch.size", qtypes_metrics.Gauge, float64(bLen+1), dims, time.Now(), false))
 					bp.AddPoint(pt)
 					bp = p.WriteBatch(bp)
-					took := time.Now().Sub(now)
-					p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
+					//took := time.Now().Sub(now)
+					//p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
 					lastTick = now
 				}
 			}
 		case val := <-tc.Read:
 			switch val.(type) {
-			case qtypes.Ticker:
-				tick := val.(qtypes.Ticker)
-				tickDiff, skipTick := tick.SkipTick(lastTick)
-				if skipTick {
-					msg := fmt.Sprintf("tick '%s' | Last tick %s ago (< %s)", tick.Name, tickDiff.String(), tick.Duration.String())
-					p.Log("trace", msg)
-					continue
-				}
-				now := time.Now()
-				lastTick = now
-				// Might take some time
-				bLen := len(bp.Points())
-				p.Log("trace", fmt.Sprintf("tick '%s' | Last tick %s ago ([some wiggel room] >= %s) - Write batch of %d", tick.Name, tickDiff.String(), tick.Duration.String(), bLen))
-				pt, _ := p.MetricsToBatchPoint(qtypes.NewExt(p.Name, "influxdb.batch.size", qtypes.Gauge, float64(bLen+1), dims, time.Now(), false))
-				bp.AddPoint(pt)
-				p.metricCount += bLen+1
-				bp = p.WriteBatch(bp)
-				took := time.Now().Sub(now)
-				p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
 			case qtypes_ticker.Ticker:
 				tick := val.(qtypes_ticker.Ticker)
 				tickDiff, skipTick := tick.SkipTick(lastTick)
@@ -182,12 +163,12 @@ func (p *Plugin) Run() {
 				// Might take some time
 				bLen := len(bp.Points())
 				p.Log("trace", fmt.Sprintf("tick '%s' | Last tick %s ago ([some wiggel room] >= %s) - Write batch of %d", tick.Name, tickDiff.String(), tick.Duration.String(), bLen))
-				pt, _ := p.MetricsToBatchPoint(qtypes.NewExt(p.Name, "influxdb.batch.size", qtypes.Gauge, float64(bLen+1), dims, time.Now(), false))
+				pt, _ := p.MetricsToBatchPoint(qtypes_metrics.NewExt(p.Name, "influxdb.batch.size", qtypes_metrics.Gauge, float64(bLen+1), dims, time.Now(), false))
 				bp.AddPoint(pt)
 				p.metricCount += bLen+1
 				bp = p.WriteBatch(bp)
-				took := time.Now().Sub(now)
-				p.QChan.Data.Send(qtypes.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
+				//took := time.Now().Sub(now)
+				//p.QChan.Data.Send(qtypes_metrics.NewStatsdPacket("influxdb.batch.write.ns",  fmt.Sprintf("%d", took.Nanoseconds()), "ms"))
 			default:
 				p.Log("warn", fmt.Sprintf("Received Tick of type %s", reflect.TypeOf(val)))
 			}
