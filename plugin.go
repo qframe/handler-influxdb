@@ -22,7 +22,7 @@ const (
 )
 
 type Plugin struct {
-    qtypes_plugin.Plugin
+    *qtypes_plugin.Plugin
 	cli client.Client
 	metricCount int
 	mutex sync.Mutex
